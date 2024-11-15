@@ -25,4 +25,5 @@ public class Pedido {
     private Date fechaPedido;
     private Integer cantidad;
     private String direccion;
+    private String estadoEnvio = "Pendiente de envío";
 }

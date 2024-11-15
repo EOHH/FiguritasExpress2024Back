@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -86,6 +87,12 @@ public class PedidoController {
         return ResponseEntity.ok(pedidos);
     }
 
+    @GetMapping("/lastSevenDays")
+    public ResponseEntity<?> obtenerPedidosUltimosDias() {
+        List<Map<String, Object>> pedidosPorFecha = pedidoService.obtenerPedidosUltimosDias(7); // Llamada con parámetro explícito
+        return ResponseEntity.ok(pedidosPorFecha);
+    }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<List<Pedido>> actualizarPedido(@RequestBody PedidoDTO pedidoDTO, @PathVariable Integer id) throws ParseException {
@@ -128,7 +135,24 @@ public class PedidoController {
             return ResponseEntity.status(400).build(); // Manejo de error
         }
     }
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<?> actualizarEstadoEnvio(@PathVariable Integer id, @RequestBody PedidoDTO pedidoDTO) {
+        try {
+            Pedido pedido = pedidoService.obtenerPedidoPorId(id);
+            if (pedido == null) {
+                return ResponseEntity.status(404).body("Pedido no encontrado");
+            }
 
+            // Usamos el estado de envío del PedidoDTO para actualizar el pedido
+            String nuevoEstadoEnvio = pedidoDTO.getEstadoEnvio();
+            pedido.setEstadoEnvio(nuevoEstadoEnvio);  // Aquí actualizamos el estado
+
+            pedidoService.actualizarPedido(pedido, id);
+            return ResponseEntity.ok("Estado de envío actualizado");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error al actualizar el estado de envío");
+        }
+    }
 
 
     @DeleteMapping("/delete/{id}")

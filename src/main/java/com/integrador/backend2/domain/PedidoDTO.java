@@ -12,4 +12,5 @@ public class PedidoDTO {
     private Integer cantidad;
     private String fechaPedido; // Manténlo como String para la conversión
     private String direccion;
+    private String estadoEnvio;
 }
