@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -28,6 +29,9 @@ public class ProductoController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WebSocketController webSocketController;
 
     @PostMapping(value = "store", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Producto store(@RequestBody ProductoDTO productoTo) {
@@ -46,6 +50,15 @@ public class ProductoController {
         producto.setFechaPost(new Date());
         producto.setUsuario(usuario);
         producto.setIdcategoria(categoria);
+
+        // Crear el mapa para la notificación de nuevo producto
+        Map<String, Object> newProductNotification = Map.of(
+                "message", "Nuevo producto registrado: " + producto.getNombre()
+        );
+
+        // Enviar la notificación de nuevo producto
+        webSocketController.sendNewProductNotification(newProductNotification);
+
 
         return productoRepository.save(producto);
     }
@@ -66,6 +79,16 @@ public class ProductoController {
     public boolean eliminar(@PathVariable("id") Integer id){
         try{
             productoRepository.deleteById(id);
+
+            // Crear el mapa para la notificación de eliminación de producto
+            Map<String, Object> deleteProductNotification = Map.of(
+                    "message", "Producto eliminado con ID: " + id
+            );
+
+            // Enviar la notificación de eliminación de producto
+            webSocketController.sendDeleteNotification(deleteProductNotification);
+
+
             return true;
         } catch (Exception err){
             return false;

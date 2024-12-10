@@ -21,14 +21,24 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public String addAdmin(AdminDTO adminDTO) {
+        // Verifica si la imagen de perfil es nula o vacía antes de asignarla
         Admin admin = new Admin(
                 adminDTO.getUsername(),
                 adminDTO.getEmail(),
                 this.passwordEncoder.encode(adminDTO.getPassword())
         );
+
+        // Si se proporciona una imagen, asignarla al admin
+        if (adminDTO.getProfileImage() != null && !adminDTO.getProfileImage().isEmpty()) {
+            admin.setProfileImage(adminDTO.getProfileImage());
+        }
+
+        // Guardar el admin en la base de datos
         adminRepository.save(admin);
+
         return admin.getUsername();
     }
+
 
     @Override
     public LoginResponse loginAdmin(LoginDTO loginDTO) {
@@ -39,12 +49,22 @@ public class AdminServiceImpl implements AdminService {
 
             // Comparación simple sin encriptar
             if (password.equals(storedPassword)) {
-                return new LoginResponse(true, "Login Success", "token_de_ejemplo", true, admin.getIdAdmin().longValue(), admin.getUsername());
+                // Se agrega el campo email y profileImage al constructor de LoginResponse
+                return new LoginResponse(
+                        true,
+                        "Login Success",
+                        "token_de_ejemplo", // Aquí deberías generar un token JWT real
+                        true,
+                        admin.getIdAdmin().longValue(),
+                        admin.getUsername(),
+                        admin.getEmail(),
+                        admin.getProfileImage() // Aquí se agrega la imagen de perfil
+                );
             } else {
-                return new LoginResponse(false, "Password Not Match", null, true, null, null);
+                return new LoginResponse(false, "Password Not Match", null, true, null, null, null, null);
             }
         } else {
-            return new LoginResponse(false, "Email not exists", null, true, null, null);
+            return new LoginResponse(false, "Email not exists", null, true, null, null, null, null);
         }
     }
 

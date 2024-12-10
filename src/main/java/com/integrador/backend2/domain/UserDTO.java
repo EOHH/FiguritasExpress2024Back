@@ -7,15 +7,17 @@ public class UserDTO {
     private String email;
     private String password;
     private String googleId; // Nuevo campo para el ID de Google
+    private String profileImage;
 
     public UserDTO(){}
 
-    public UserDTO(Integer idUser, String username, String email, String password, String googleId) {
+    public UserDTO(Integer idUser, String username, String email, String password, String googleId, String profileImage) {
         this.idUser = idUser;
         this.username = username;
         this.email = email;
         this.password = password;
         this.googleId = googleId;
+        this.profileImage = profileImage;
     }
 
     // Getters y Setters
@@ -57,5 +59,13 @@ public class UserDTO {
 
     public void setGoogleId(String googleId) {
         this.googleId = googleId;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

@@ -6,6 +6,7 @@ public class AdminDTO {
     private String username;
     private String email;
     private String password;
+    private String profileImage;
 
     public AdminDTO() {}
 
@@ -47,5 +48,13 @@ public class AdminDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = this.profileImage;
     }
 }

@@ -10,12 +10,12 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idUser;
+        private Integer idUser;
 
     private String username; // Almacena el nombre del usuario de Google
     private String email;
     private String password;
-
+    private String profileImage;
     private String lastLogin;
     private String estado;
     private String isAdmin;
@@ -29,9 +29,10 @@ public class User {
         this.idUser = idUser;
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String profileImage) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.profileImage = profileImage;
     }
 }

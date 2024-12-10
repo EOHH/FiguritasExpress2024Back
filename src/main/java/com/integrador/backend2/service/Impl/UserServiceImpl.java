@@ -23,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String addUser(UserDTO userDTO) {
+        // Guardar el nuevo usuario con el campo profileImage
         User user = new User(
                 userDTO.getUsername(),
                 userDTO.getEmail(),
-                this.passwordEncoder.encode(userDTO.getPassword())
+                this.passwordEncoder.encode(userDTO.getPassword()),
+                userDTO.getProfileImage() // Incluir el campo profileImage
         );
         userRepository.save(user);
         return user.getUsername();
@@ -46,22 +48,22 @@ public class UserServiceImpl implements UserService {
             String encodedPassword = user.getPassword();
             boolean isPwdRight = passwordEncoder.matches(password, encodedPassword);
             if (isPwdRight) {
-                // Convertir el idUser de Integer a Long y agregar el username
                 return new LoginResponse(
                         true,
                         "Login Success",
                         "token_de_ejemplo",
                         false,
-                        user.getIdUser().longValue(),
-                        user.getUsername() // Aquí agregas el nombre de usuario a la respuesta
+                        user.getIdUser().longValue(), // Conversión explícita a Long
+                        user.getUsername(),
+                        user.getEmail(), // Nuevo campo email
+                        user.getProfileImage()
                 );
             } else {
-                return new LoginResponse(false, "Password Not Match", null, false, null, null);
+                return new LoginResponse(false, "Password Not Match", null, false, null, null, null, null);
             }
         } else {
-            return new LoginResponse(false, "Email not exists", null, false, null, null);
+            return new LoginResponse(false, "Email not exists", null, false, null, null, null, null);
         }
     }
-
 
 }

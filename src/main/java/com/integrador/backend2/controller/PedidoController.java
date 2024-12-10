@@ -32,6 +32,9 @@ public class PedidoController {
     @Autowired
     private ProductoService productoService; // Servicio para obtener los detalles del producto
 
+    @Autowired
+    private WebSocketController webSocketController;
+
 
     @PostMapping("/store")
     public ResponseEntity<?> crearPedido(@RequestBody PedidoDTO pedidoDTO) {
@@ -58,24 +61,25 @@ public class PedidoController {
                 pedido.setProducto(producto);
                 pedido.setEstado(pedidoDTO.getEstado());
                 pedido.setCantidad(pedidoDTO.getCantidad());
-
-                // Conversión de fecha con manejo de errores
-                try {
-                    pedido.setFechaPedido(new Date(new SimpleDateFormat("yyyy-MM-dd").parse(pedidoDTO.getFechaPedido()).getTime()));
-                } catch (ParseException e) {
-                    return ResponseEntity.status(400).body("Formato de fecha inválido");
-                }
-
+                pedido.setFechaPedido(new Date(new SimpleDateFormat("yyyy-MM-dd").parse(pedidoDTO.getFechaPedido()).getTime()));
                 pedido.setDireccion(pedidoDTO.getDireccion());
 
                 Pedido nuevoPedido = pedidoService.crearPedido(pedido);
                 pedidos.add(nuevoPedido);
             }
 
+            // Crear el mapa para la notificación WebSocket
+            Map<String, Object> orderNotification = Map.of(
+                    "message", "Nuevo pedido registrado: " + pedidos.size() + " pedido(s) de " + usuario.getUsername()
+            );
+
+            // Notificación al WebSocket después de crear un pedido
+            webSocketController.sendNewOrderNotification(orderNotification);
+
             return ResponseEntity.status(201).body(pedidos);
 
         } catch (Exception e) {
-            e.printStackTrace(); // Muestra el error en la consola del servidor
+            e.printStackTrace();
             return ResponseEntity.status(400).body("Error al crear el pedido: " + e.getMessage());
         }
     }
@@ -159,6 +163,16 @@ public class PedidoController {
     public boolean eliminarPedido(@PathVariable Integer id) {
         try {
             pedidoService.eliminarPedido(id);
+
+            // Crear el mapa para la notificación de eliminación de pedido
+            Map<String, Object> deleteOrderNotification = Map.of(
+                    "message", "Pedido eliminado con ID: " + id
+            );
+
+            // Enviar la notificación de eliminación de pedido
+            webSocketController.sendDeleteNotification(deleteOrderNotification);
+
+
             return true; // Devuelve true si la eliminación fue exitosa
         } catch (Exception e) {
             return false; // Devuelve false si ocurre un error
