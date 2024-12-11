@@ -50,6 +50,7 @@ public class ProductoController {
         producto.setFechaPost(new Date());
         producto.setUsuario(usuario);
         producto.setIdcategoria(categoria);
+        producto.setStock(productoTo.getStock());
 
         // Crear el mapa para la notificación de nuevo producto
         Map<String, Object> newProductNotification = Map.of(

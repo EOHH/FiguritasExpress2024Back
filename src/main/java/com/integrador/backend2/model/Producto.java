@@ -17,6 +17,7 @@ public class Producto {
     private String nombre;
     private Float precio;
     private String condicion;
+    private Integer stock;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "fechapost")

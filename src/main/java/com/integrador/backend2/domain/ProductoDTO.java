@@ -18,5 +18,6 @@ public class ProductoDTO {
     private Date fechaPost;
     private Integer usuario;
     private Integer idcategoria;
+    private Integer stock;
 
 }
